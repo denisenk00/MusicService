@@ -1,4 +1,4 @@
-package com.denysenko.musicservice;
+package com.denysenko.musicservice.forms;
 
 import org.springframework.stereotype.Component;
 
@@ -6,22 +6,13 @@ import org.springframework.stereotype.Component;
 public class Request {
     private String track;
     private String singer;
-    private String format;
 
     public Request(){}
-    public Request(String track, String singer, String format) {
+    public Request(String track, String singer) {
         this.track = track;
         this.singer = singer;
-        this.format = format;
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
 
     public String getTrack() {
         return track;
