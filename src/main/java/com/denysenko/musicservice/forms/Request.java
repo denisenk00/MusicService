@@ -7,12 +7,13 @@ public class Request {
     private String track;
     private String singer;
 
-    public Request(){}
+    public Request() {
+    }
+
     public Request(String track, String singer) {
         this.track = track;
         this.singer = singer;
     }
-
 
     public String getTrack() {
         return track;

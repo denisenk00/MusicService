@@ -23,12 +23,12 @@ public class FileWriter {
         this.response = response;
     }
 
-    public byte[] infoToByteArr(){
+    public byte[] infoToByteArr() {
         logger.debug("Method \"infoToByteArr\" was called");
         XWPFDocument document = new XWPFDocument();
         List<XWPFParagraph> listOfParagraph = new LinkedList<>();
         int amountOfParagraphs = response.getTracks().size() + 5;
-        for(int i = 0; i < amountOfParagraphs; i++) {
+        for (int i = 0; i < amountOfParagraphs; i++) {
             listOfParagraph.add(document.createParagraph());
         }
         listOfParagraph.get(0).createRun().setText("Album title: " + response.getTitle());
@@ -36,7 +36,7 @@ public class FileWriter {
         listOfParagraph.get(2).createRun().setText("Singer: " + response.getSinger());
         listOfParagraph.get(3).createRun().setText("Tracks: ");
         int i = 4;
-        for (Map.Entry<String, String> entry: response.getTracks().entrySet()) {
+        for (Map.Entry<String, String> entry : response.getTracks().entrySet()) {
             listOfParagraph.get(i).createRun().addTab();
             listOfParagraph.get(i).createRun().setText("Name: " + entry.getKey());
             listOfParagraph.get(i).createRun().addTab();
@@ -48,8 +48,7 @@ public class FileWriter {
             document.write(out);
             logger.debug("Information about album was successfully recorded to a file");
             return out.toByteArray();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             logger.error("Information about album was not recorded to a file");
             return null;
         }

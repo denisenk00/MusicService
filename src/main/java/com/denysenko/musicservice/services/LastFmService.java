@@ -45,7 +45,7 @@ public class LastFmService implements MusicService {
     }
 
     @Override
-    public Response getInfoFromService() throws RestServiceException{
+    public Response getInfoFromService() throws RestServiceException {
         logger.debug("Method \"getInfo\" was called");
         String urlSearchTrack = new String();
         urlSearchTrack = url + "/2.0/?method=track.getInfo&track=" + request.getTrack() + "&artist=" + request.getSinger() +
@@ -63,29 +63,28 @@ public class LastFmService implements MusicService {
         return response;
     }
 
-    public static URL createURl(String urlSt){
+    public static URL createURl(String urlSt) {
         logger.debug("Method \"createURL\" was called");
-        try{
+        try {
             return new URL(urlSt);
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             logger.error("Address for request to last.fm api was not created");
             return null;
         }
     }
+
     public static String readJsonFromUrl(String urlSt) {
         logger.debug("Method \"readJsonFromUrl\" was called");
         StringBuilder stringBuilder = new StringBuilder();
 
-        try(BufferedReader in = new BufferedReader(new InputStreamReader(createURl(urlSt).openStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(createURl(urlSt).openStream()))) {
             logger.debug("Address for request to last.fm api was successfully created");
             String inputLine;
-            while((inputLine = in.readLine()) != null){
+            while ((inputLine = in.readLine()) != null) {
                 stringBuilder.append(inputLine);
             }
             logger.debug("Information from url was successfully read");
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             logger.error("Information from url was not read");
         }
         return stringBuilder.toString();

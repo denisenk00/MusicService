@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
 @RestController
 public class Controller {
     private Response response;
@@ -32,12 +31,12 @@ public class Controller {
         this.fileWriter = fileWriter;
     }
 
-    @GetMapping (value = "/albumInfo", produces = {"application/json","application/xml"})
+    @GetMapping(value = "/albumInfo", produces = {"application/json", "application/xml"})
     @Cacheable("albumInfo")
     public ResponseEntity searchAlbumInfo(@RequestParam(name = "track") String track,
-                                 @RequestParam(name = "singer") String singer,
-                                 @RequestParam(name = "file", required = false) boolean file,
-                                @RequestParam(name = "format", required = false) String format) {
+                                          @RequestParam(name = "singer") String singer,
+                                          @RequestParam(name = "file", required = false) boolean file,
+                                          @RequestParam(name = "format", required = false) String format) {
 
         logger.info("Method \"searchAlbumInfo\" was called with parameters: track = " + track + ", singer = " + singer +
                 ", file = " + file + ", format = " + format);
@@ -46,11 +45,10 @@ public class Controller {
             format = "json";
             headers.setContentType(MediaType.APPLICATION_JSON);
             logger.debug("Response format \"json\" has been set");
-        } else if (format.equals("xml")){
+        } else if (format.equals("xml")) {
             headers.setContentType(MediaType.APPLICATION_XML);
             logger.debug("Response format \"xml\" has been set");
-        }
-        else{
+        } else {
             logger.error("Invalid format for response: " + format);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(new RestServiceException(HttpStatus.BAD_REQUEST,
                     "Invalid format - This service doesn't exist in that format", "3")));
@@ -65,18 +63,14 @@ public class Controller {
                 headers.add("Content-Disposition", "attachment;filename=InfoAboutAlbum.docx");
                 logger.info("Information was returned as a file");
                 return ResponseEntity.ok().headers(headers).body(bytes);
-            }
-            else{
+            } else {
                 logger.info("Information was returned in " + format + " format");
                 return ResponseEntity.ok().headers(headers).body(response);
             }
-        }
-        catch (RestServiceException e){
-            logger.debug("Information about error was returned in "+ format + " format");
+        } catch (RestServiceException e) {
+            logger.debug("Information about error was returned in " + format + " format");
             return ResponseEntity.status(e.getHttpStatus()).headers(headers).body(new ExceptionResponse(e));
         }
     }
-
-
 
 }
