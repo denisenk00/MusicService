@@ -1,9 +1,8 @@
 package com.denysenko.musicservice.controllers;
 
-import com.denysenko.musicservice.forms.ExceptionResponse;
+import com.denysenko.musicservice.ExceptionResponse;
 import com.denysenko.musicservice.FileWriter;
-import com.denysenko.musicservice.forms.Request;
-import com.denysenko.musicservice.forms.Response;
+import com.denysenko.musicservice.Album;
 import com.denysenko.musicservice.exceptions.RestServiceException;
 import com.denysenko.musicservice.services.MusicService;
 import org.apache.logging.log4j.LogManager;
@@ -18,15 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class Controller {
-    private Response response;
-    private Request request;
     private MusicService musicService;
     private FileWriter fileWriter;
     private static Logger logger = LogManager.getLogger(Controller.class);
 
-    public Controller(Response response, Request request, MusicService musicService, FileWriter fileWriter) {
-        this.response = response;
-        this.request = request;
+    public Controller(MusicService musicService, FileWriter fileWriter) {
         this.musicService = musicService;
         this.fileWriter = fileWriter;
     }
@@ -53,22 +48,20 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(new RestServiceException(HttpStatus.BAD_REQUEST,
                     "Invalid format - This service doesn't exist in that format", "3")));
         }
-        request.setTrack(track);
-        request.setSinger(singer);
         try {
-            response = musicService.getInfoFromService();
+            Album album = musicService.getAlbum(track, singer);
             logger.debug("Response object was received");
             if (file) {
-                byte[] bytes = fileWriter.infoToByteArr();
+                byte[] document = fileWriter.writeDocument(album);
                 headers.add("Content-Disposition", "attachment;filename=InfoAboutAlbum.docx");
                 logger.info("Information was returned as a file");
-                return ResponseEntity.ok().headers(headers).body(bytes);
+                return ResponseEntity.ok().headers(headers).body(document);
             } else {
                 logger.info("Information was returned in " + format + " format");
-                return ResponseEntity.ok().headers(headers).body(response);
+                return ResponseEntity.ok().headers(headers).body(album);
             }
         } catch (RestServiceException e) {
-            logger.debug("Information about error was returned in " + format + " format");
+            logger.debug("Information about error was returned in " + format + " format", e);
             return ResponseEntity.status(e.getHttpStatus()).headers(headers).body(new ExceptionResponse(e));
         }
     }

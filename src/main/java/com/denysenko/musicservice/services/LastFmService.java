@@ -1,83 +1,64 @@
 package com.denysenko.musicservice.services;
 
-import com.denysenko.musicservice.forms.Request;
-import com.denysenko.musicservice.forms.Response;
+import com.denysenko.musicservice.Album;
 import com.denysenko.musicservice.exceptions.RestServiceException;
 import com.denysenko.musicservice.parsers.JsonParser;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @Service
 public class LastFmService implements MusicService {
-    private Request request;
-    private Response response;
     @Value("${API.key}")
     private String apiKey;
-    private String url = "http://ws.audioscrobbler.com";
     private static Logger logger = LogManager.getLogger(LastFmService.class);
 
-    public LastFmService(Request request, Response response) {
-        this.request = request;
-        this.response = response;
-    }
-
-    public Response getResponse() {
-        return response;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    public Request getRequest() {
-        return request;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
     @Override
-    public Response getInfoFromService() throws RestServiceException {
+    public Album getAlbum(String track, String singer) throws RestServiceException {
         logger.debug("Method \"getInfo\" was called");
-        String urlSearchTrack = new String();
-        urlSearchTrack = url + "/2.0/?method=track.getInfo&track=" + request.getTrack() + "&artist=" + request.getSinger() +
-                "&api_key=" + apiKey + "&format=json";
-        urlSearchTrack = urlSearchTrack.replaceAll(" ", "%20");
-
-        final String stringPosts = readJsonFromUrl(urlSearchTrack);
-        String albumName = JsonParser.getAlbumTitle(stringPosts);
-        String urlGetAlbumInfo = new String();
-        urlGetAlbumInfo += url + "/2.0/?method=album.getinfo&api_key=" + apiKey + "&artist=" +
-                request.getSinger() + "&album=" + albumName + "&format=json";
-        urlGetAlbumInfo = urlGetAlbumInfo.replaceAll(" ", "%20");
-        final String secondStringPosts = readJsonFromUrl(urlGetAlbumInfo);
-        JsonParser.parseAlbumInfo(response, secondStringPosts);
-        return response;
-    }
-
-    public static URL createURl(String urlSt) {
-        logger.debug("Method \"createURL\" was called");
+        URIBuilder uriBuilder = new URIBuilder();
+        uriBuilder.setScheme("http").setHost("ws.audioscrobbler.com")
+                .setPath("/2.0/").addParameter("method", "track.getInfo")
+                .addParameter("track", track)
+                .addParameter("artist", singer).addParameter("api_key", apiKey)
+                .addParameter("format", "json");
+        URI uriSearchTrack = null;
         try {
-            return new URL(urlSt);
-        } catch (MalformedURLException e) {
-            logger.error("Address for request to last.fm api was not created");
-            return null;
+            uriSearchTrack = uriBuilder.build();
+        } catch (URISyntaxException e) {
+            logger.error("Address for request to last.fm api was not created", e);
         }
+
+        final String stringPosts = readJsonFromUrl(uriSearchTrack);
+        String albumName = JsonParser.getAlbumTitle(stringPosts);
+
+        uriBuilder.clearParameters();
+        uriBuilder.setPath("/2.0/").addParameter("method", "album.getinfo").addParameter("api_key", apiKey)
+                .addParameter("artist", singer).addParameter("album", albumName)
+                .addParameter("format", "json");
+        URI uriGetAlbumInfo = null;
+        try {
+            uriGetAlbumInfo = uriBuilder.build();
+        } catch (URISyntaxException e) {
+            logger.error("Address for request to last.fm api was not created", e);
+        }
+        final String secondStringPosts = readJsonFromUrl(uriGetAlbumInfo);
+        return JsonParser.parseAlbum(secondStringPosts);
     }
 
-    public static String readJsonFromUrl(String urlSt) {
+
+    public String readJsonFromUrl(URI uri) {
         logger.debug("Method \"readJsonFromUrl\" was called");
         StringBuilder stringBuilder = new StringBuilder();
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(createURl(urlSt).openStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
             logger.debug("Address for request to last.fm api was successfully created");
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
@@ -85,7 +66,7 @@ public class LastFmService implements MusicService {
             }
             logger.debug("Information from url was successfully read");
         } catch (IOException e) {
-            logger.error("Information from url was not read");
+            logger.error("Information from url was not read", e);
         }
         return stringBuilder.toString();
     }

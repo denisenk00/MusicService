@@ -1,4 +1,4 @@
-package com.denysenko.musicservice.forms;
+package com.denysenko.musicservice;
 
 import com.denysenko.musicservice.exceptions.RestServiceException;
 import org.springframework.http.HttpStatus;
