@@ -1,20 +1,24 @@
-package com.denysenko.musicservice.forms;
+package com.denysenko.musicservice;
 
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
-
-@Component
-public class Response implements Serializable {
+public class Album implements Serializable {
     private String poster;
     private String title;
     private String singer;
-    private Map<String, String> tracks;
 
-    public Response(){}
+    @JacksonXmlElementWrapper(localName = "tracks")
+    @JacksonXmlProperty(localName = "track")
+    private List<Track> tracks;
 
-    public Response(String poster, String title, String singer, Map<String, String> tracks) {
+    public Album() {
+    }
+
+    public Album(String poster, String title, String singer, List<Track> tracks) {
         this.poster = poster;
         this.title = title;
         this.singer = singer;
@@ -45,11 +49,11 @@ public class Response implements Serializable {
         this.singer = singer;
     }
 
-    public Map<String, String> getTracks() {
+    public List<Track> getTracks() {
         return tracks;
     }
 
-    public void setTracks(Map<String, String> tracks) {
+    public void setTracks(List<Track> tracks) {
         this.tracks = tracks;
     }
 }
