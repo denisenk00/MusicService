@@ -10,8 +10,8 @@ Java 15, Spring Boot, Apache POI, JSON
 ## Endpoints
 
 - /albumInfo
-Parameters:
-* track
-* singer
-* file - boolean, not required
-* format - xml or json(default), not required
+  Parameters:
+  * track
+  * singer
+  * file - boolean, not required
+  * format - xml or json(default), not required
