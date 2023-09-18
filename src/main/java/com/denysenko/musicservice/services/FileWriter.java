@@ -1,6 +1,8 @@
-package com.denysenko.musicservice;
+package com.denysenko.musicservice.services;
 
-import com.denysenko.musicservice.parsers.JsonParser;
+import com.denysenko.musicservice.model.Album;
+import com.denysenko.musicservice.model.Track;
+import com.denysenko.musicservice.services.parsers.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;

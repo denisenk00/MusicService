@@ -2,12 +2,12 @@ package com.denysenko.musicservice.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class RestServiceException extends RuntimeException {
+public class RemoteServiceException extends RuntimeException {
     private HttpStatus httpStatus;
     private String massage;
     private String exceptionCode;
 
-    public RestServiceException(HttpStatus httpStatus, String massage, String exceptionCode) {
+    public RemoteServiceException(HttpStatus httpStatus, String massage, String exceptionCode) {
         this.httpStatus = httpStatus;
         this.massage = massage;
         this.exceptionCode = exceptionCode;

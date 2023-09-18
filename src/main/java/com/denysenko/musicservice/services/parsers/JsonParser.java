@@ -1,8 +1,8 @@
-package com.denysenko.musicservice.parsers;
+package com.denysenko.musicservice.services.parsers;
 
-import com.denysenko.musicservice.Album;
-import com.denysenko.musicservice.Track;
-import com.denysenko.musicservice.exceptions.RestServiceException;
+import com.denysenko.musicservice.model.Album;
+import com.denysenko.musicservice.model.Track;
+import com.denysenko.musicservice.exceptions.RemoteServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -12,26 +12,27 @@ import org.springframework.http.HttpStatus;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class JsonParser {
     private static Logger logger = LogManager.getLogger(JsonParser.class);
 
-    public static String getAlbumTitle(String info) throws RestServiceException {
+    public static Optional<String> getAlbumTitle(String info) {
         logger.debug("Method \"getAlbumTitle\" was called");
         JSONObject obj = new JSONObject(info);
         logger.debug("JSONObject was created");
         try {
             String albumName = obj.getJSONObject("track").getJSONObject("album").getString("title");
             logger.debug("Album title was found");
-            return albumName;
-        } catch (JSONException e) {
-            logger.error("No such album found", e);
-            throw new RestServiceException(HttpStatus.BAD_GATEWAY, "No such album found", "1");
+            return Optional.of(albumName);
+        }catch (JSONException e){
+            logger.debug("Album title wasn't found");
+            return Optional.empty();
         }
     }
 
-    public static Album parseAlbum(String info) throws RestServiceException {
+    public static Optional<Album> parseAlbum(String info) throws RemoteServiceException {
         logger.debug("Method \"parseAlbumInfo\" was called");
         Album album = new Album();
         JSONObject obj = new JSONObject(info);
@@ -47,10 +48,10 @@ public class JsonParser {
             logger.debug("Link to poster was received");
             album.setTracks(parseTracks(obj.getJSONObject("tracks")));
             logger.debug("Info about album tracks was received");
-            return album;
+            return Optional.of(album);
         } catch (JSONException e) {
             logger.error("Not found all album information", e);
-            throw new RestServiceException(HttpStatus.BAD_GATEWAY, "Not found all album information", "2");
+            return Optional.empty();
         }
     }
 

@@ -1,5 +1,6 @@
-package com.denysenko.musicservice;
+package com.denysenko.musicservice.model;
 
+import com.denysenko.musicservice.model.Track;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 

@@ -1,11 +1,13 @@
 package com.denysenko.musicservice.services;
 
-import com.denysenko.musicservice.Album;
-import com.denysenko.musicservice.exceptions.RestServiceException;
-import org.springframework.stereotype.Service;
+import com.denysenko.musicservice.model.Album;
+import com.denysenko.musicservice.exceptions.RemoteServiceException;
+
+import java.util.Optional;
 
 
-@Service
 public interface MusicService {
-    Album getAlbum(String track, String singer) throws RestServiceException;
+
+    Optional<Album> findAlbum(String track, String singer) throws RemoteServiceException;
+
 }

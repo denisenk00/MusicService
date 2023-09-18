@@ -1,14 +1,14 @@
-package com.denysenko.musicservice;
+package com.denysenko.musicservice.model;
 
-import com.denysenko.musicservice.exceptions.RestServiceException;
+import com.denysenko.musicservice.exceptions.RemoteServiceException;
 import org.springframework.http.HttpStatus;
 
-public class ExceptionResponse {
+public class ExceptionResponse{
     private HttpStatus httpStatus;
     private String massage;
     private String exceptionCode;
 
-    public ExceptionResponse(RestServiceException e) {
+    public ExceptionResponse(RemoteServiceException e) {
         this.httpStatus = e.getHttpStatus();
         this.massage = e.getMassage();
         this.exceptionCode = e.getExceptionCode();

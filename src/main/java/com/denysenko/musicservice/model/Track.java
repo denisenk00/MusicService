@@ -1,4 +1,4 @@
-package com.denysenko.musicservice;
+package com.denysenko.musicservice.model;
 
 
 public class Track {
